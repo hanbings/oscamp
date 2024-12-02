@@ -4,6 +4,7 @@
 
 mod buddy;
 mod linked_list;
+mod chaos;
 
 use allocator::{AllocError, AllocResult, BaseAllocator, ByteAllocator};
 use buddy::Heap;
