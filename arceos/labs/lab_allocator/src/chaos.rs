@@ -59,12 +59,8 @@ impl Chaos {
             _ => None,
         };
 
-        if vec_reserve_ptr.is_some() {
+        if vec_reserve_ptr.is_some() && layout.align() == 8 {
             return Ok(NonNull::new(vec_reserve_ptr.unwrap() as *mut u8).unwrap());
-        }
-
-        if self.end < 0xffffffc0802005fc {
-            return Err(());
         }
 
         // check if memory is overflow
@@ -107,7 +103,7 @@ impl Chaos {
         self.tail +=layout.size();
         self.allocated -= layout.size();
 
-        log::warn!("before dealloc_memory: head=0x{:x}, tail=0x{:x}, size=0x{:x}", self.head, self.tail, layout.size());
+        log::warn!("before dealloc_memory: head=0x{:x}, tail=0x{:x}, start=0x{:x}, end=0x{:x}", self.head, self.tail, self.start, self.end);
     }
 
     pub fn total_bytes(&self) -> usize {
