@@ -7,18 +7,18 @@ mod linked_list;
 mod chaos;
 
 use allocator::{AllocError, AllocResult, BaseAllocator, ByteAllocator};
-use buddy::Heap;
+use chaos::Chaos;
 use core::alloc::Layout;
 use core::ptr::NonNull;
 
 pub struct LabByteAllocator {
-    inner: Heap<32>,
+    inner: Chaos,
 }
 
 impl LabByteAllocator {
     pub const fn new() -> Self {
         Self {
-            inner: Heap::<32>::new(),
+            inner: Chaos::new(),
         }
     }
 }
@@ -29,7 +29,7 @@ impl BaseAllocator for LabByteAllocator {
     }
 
     fn add_memory(&mut self, start: usize, size: usize) -> AllocResult {
-        unsafe { self.inner.add_to_heap(start, start + size) };
+        self.inner.add_to_heap(start, start + size);
         Ok(())
     }
 }
@@ -44,18 +44,14 @@ impl ByteAllocator for LabByteAllocator {
     }
 
     fn total_bytes(&self) -> usize {
-        self.inner.stats_total_bytes()
+        self.inner.total_bytes()
     }
 
     fn used_bytes(&self) -> usize {
-        self.inner.stats_alloc_actual()
+        self.inner.used_bytes()
     }
 
     fn available_bytes(&self) -> usize {
-        self.inner.stats_total_bytes() - self.inner.stats_alloc_actual()
+        self.inner.available_bytes()
     }
-}
-
-pub(crate) fn prev_power_of_two(num: usize) -> usize {
-    1 << (usize::BITS as usize - num.leading_zeros() as usize - 1)
 }

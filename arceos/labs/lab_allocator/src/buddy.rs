@@ -1,4 +1,3 @@
-use crate::prev_power_of_two;
 use core::alloc::Layout;
 use core::cmp::{max, min};
 use core::fmt;
@@ -142,4 +141,8 @@ impl<const ORDER: usize> fmt::Debug for Heap<ORDER> {
             .field("total", &self.total)
             .finish()
     }
+}
+
+pub(crate) fn prev_power_of_two(num: usize) -> usize {
+    1 << (usize::BITS as usize - num.leading_zeros() as usize - 1)
 }
