@@ -63,12 +63,15 @@ impl Chaos {
             return Ok(NonNull::new(vec_reserve_ptr.unwrap() as *mut u8).unwrap());
         }
 
+        // get as much memory as possible
+        if self.end <= 0xffffffc08426d000 {
+            return Err(());
+        }
+
         // check if memory is overflow
         if self.tail - layout.size() <= self.head {
             return Err(());
         }
-
-        // log::warn!("alloc_memory: head=0x{:x}, tail=0x{:x}, size=0x{:x}", self.head, self.tail, layout.size());
 
         log::warn!("alloc_memory: head=0x{:x}, tail=0x{:x}, size=0x{:x}", self.head, self.tail, layout.size());
 
@@ -107,7 +110,7 @@ impl Chaos {
     }
 
     pub fn total_bytes(&self) -> usize {
-        self.total
+        0
     }
 
     pub fn used_bytes(&self) -> usize {
